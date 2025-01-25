@@ -28,6 +28,8 @@ public class PlayerBehaviour : MonoBehaviour
         moveaction = inputs.actions.FindAction("Move");
         fireaction = inputs.actions.FindAction("Fire");
 
+        anim = GetComponent<Animator>();
+
         GameObject spellsManager = GameObject.Find("Spells");
         if (spellsManager != null)
         {
