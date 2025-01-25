@@ -8,48 +8,46 @@ public class SpellsBehaviour : MonoBehaviour
     [SerializeField] private Timer timer;
     [SerializeField] private List<MonoBehaviour> spellBehaviours = new List<MonoBehaviour>();
     private ISpellBehaviour currentSpell;
-    private int lastTimerSecond = -1; // Track the last timer second when the spell was changed
+    private bool isCooldownActive = false;
+    private string queuedSpell = null;
+    private int lastTimerSecond = -1;
 
     void Start()
     {
-        // Create a new list for valid spell behaviors
         List<MonoBehaviour> validSpells = new List<MonoBehaviour>();
 
         foreach (var spell in spellBehaviours)
         {
             if (spell is ISpellBehaviour)
             {
-                validSpells.Add(spell); // Add valid spells to the new list
+                validSpells.Add(spell);
             }
         }
 
-        // Replace the original list with the filtered one
         spellBehaviours = validSpells;
-
-        // Choose a random spell as the current spell
         ChooseRandomSpell();
         UpdateSpellName();
     }
 
     void Update()
     {
-        // Get the current second count from the timer
+        CheckCurrentSpellHitMob();
+
         int currentSecond = timer.GetSecondsCount();
 
-        // Change the spell only if the timer is at a multiple of 10 and hasn't already been updated for this interval
+        // Check if the timer is at a multiple of 10 and hasn't already been updated for this interval
         if (currentSecond % 10 == 0 && currentSecond != lastTimerSecond)
         {
             ChooseDifferentCurrentSpell();
-            lastTimerSecond = currentSecond; // Update the last updated time
+            lastTimerSecond = currentSecond; // Update the last updated second
         }
-
-        CheckCurrentSpellHitMob();
     }
+
 
     public void ChooseRandomSpell()
     {
         int randomIndex = Random.Range(0, spellBehaviours.Count);
-        currentSpell = spellBehaviours[randomIndex] as ISpellBehaviour;
+        SetCurrentSpell(spellBehaviours[randomIndex] as ISpellBehaviour);
     }
 
     public void ChooseDifferentCurrentSpell()
@@ -60,19 +58,54 @@ public class SpellsBehaviour : MonoBehaviour
             newSpell = spellBehaviours[Random.Range(0, spellBehaviours.Count)] as ISpellBehaviour;
         } while (newSpell == currentSpell);
 
+        SetCurrentSpell(newSpell);
+    }
+
+    public void SetCurrentSpell(ISpellBehaviour newSpell)
+    {
+        if (isCooldownActive)
+        {
+            Debug.Log($"Cooldown active. Queuing spell: {newSpell.GetType().Name}");
+            queuedSpell = newSpell.GetType().Name;
+            return;
+        }
+
         currentSpell = newSpell;
-
         UpdateSpellName();
+
+        if (newSpell.GetType().Name == "BlizzardBehaviour" ||
+            newSpell.GetType().Name == "TempestBehaviour" ||
+            newSpell.GetType().Name == "EarthballBehaviour")
+        {
+            InvokeCurrentSpellOnce(); // Automatically invoke specific spells
+        }
     }
 
-    public void InvokeCurrentSpell()
+    public void InvokeCurrentSpellOnce()
     {
+        if (isCooldownActive) return;
+
         currentSpell?.InvokeSpell();
+        StartCooldown();
     }
 
-    public void MoveCurrentSpell(GameObject spell)
+    private void StartCooldown()
     {
-        currentSpell?.MoveSpell(spell);
+        isCooldownActive = true;
+        Invoke(nameof(EndCooldown), 10f);
+    }
+
+    private void EndCooldown()
+    {
+        isCooldownActive = false;
+
+        if (!string.IsNullOrEmpty(queuedSpell))
+        {
+            Debug.Log($"Cooldown ended. Invoking queued spell: {queuedSpell}");
+            var queuedSpellBehaviour = spellBehaviours.Find(spell => spell.GetType().Name == queuedSpell);
+            SetCurrentSpell(queuedSpellBehaviour as ISpellBehaviour);
+            queuedSpell = null;
+        }
     }
 
     public void CheckCurrentSpellHitMob()
@@ -82,7 +115,7 @@ public class SpellsBehaviour : MonoBehaviour
 
     public string GetCurrentSpell()
     {
-        return currentSpell.GetType().Name;
+        return currentSpell?.GetType().Name ?? "None";
     }
 
     private void UpdateSpellName()
@@ -98,10 +131,8 @@ public class SpellsBehaviour : MonoBehaviour
         }
     }
 
-   /* // Invoke current spell once and reactive invoke current spell after 10 seconds
-    public void InvokeCurrentSpellOnce()
+    public void CastCurrentSpell()
     {
-        InvokeCurrentSpell();
-        Invoke("InvokeCurrentSpellOnce", 10f);
-    }*/
+        currentSpell?.InvokeSpell();
+    }
 }

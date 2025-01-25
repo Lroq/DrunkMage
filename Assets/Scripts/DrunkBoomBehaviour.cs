@@ -45,7 +45,9 @@ public class DrunkBoomBehaviour : MonoBehaviour, ISpellBehaviour
         // Slow down the player for a set amount of time
         PlayerBehaviour player = _player.GetComponent<PlayerBehaviour>();
         player.Speed = 2f;
-        player.Invoke("ResetSpeed", 1f);
+
+        // Reset the player speed after a set amount of time
+        Invoke("ResetPlayerSpeed", 2f);
     }
 
     public void CheckIfHitMob()
@@ -68,5 +70,11 @@ public class DrunkBoomBehaviour : MonoBehaviour, ISpellBehaviour
 
     public void MoveSpell(GameObject spell)
     {
+    }
+
+    private void ResetPlayerSpeed()
+    {
+        PlayerBehaviour player = _player.GetComponent<PlayerBehaviour>();
+        player.Speed = 5f;
     }
 }
