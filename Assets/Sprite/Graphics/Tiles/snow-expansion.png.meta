@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      snow-expansion_0: 6606809341300014241
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
