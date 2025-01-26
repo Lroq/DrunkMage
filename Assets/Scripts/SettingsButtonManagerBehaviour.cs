@@ -19,7 +19,11 @@ public class SettingsButtonManagerBehaviour : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {   
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnEscapeButtonClicked();
+        }
     }
 
     public void OnBackButtonClicked()
@@ -44,5 +48,10 @@ public class SettingsButtonManagerBehaviour : MonoBehaviour
     {
         Debug.Log("Controls Button Clicked");
         SceneManager.LoadScene("ControlsMenu");
+    }
+
+    public void OnEscapeButtonClicked()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }

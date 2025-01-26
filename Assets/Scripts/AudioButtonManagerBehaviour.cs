@@ -16,13 +16,20 @@ public class AudioButtonManagerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnEscapeButtonClicked();
+        }   
     }
 
     public void OnBackButtonClicked()
     {
         SceneManager.LoadScene("SettingsMenu");
         Debug.Log("Back Button Clicked");
+    }
 
+    public void OnEscapeButtonClicked()
+    {
+        SceneManager.LoadScene("SettingsMenu");
     }
 }

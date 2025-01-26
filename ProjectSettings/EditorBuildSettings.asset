@@ -9,20 +9,23 @@ EditorBuildSettings:
     path: Assets/MapScene/MainMenu.unity
     guid: 4f02ba3927c4e6a4d9b2c1d9b467854b
   - enabled: 1
-    path: Assets/MapScene/ControlsMenu.unity
-    guid: 908ff715ae9ee8e4e9a85ba2549e4d8a
+    path: Assets/MapScene/SettingsMenu.unity
+    guid: 8d4d27426419ff54e91522e7872d5a84
   - enabled: 1
     path: Assets/MapScene/AudioMenu.unity
     guid: 5938cbb43d9b6d644bce3032fe12d9f3
   - enabled: 1
-    path: Assets/MapScene/SettingsMenu.unity
-    guid: 8d4d27426419ff54e91522e7872d5a84
+    path: Assets/MapScene/VideoMenu.unity
+    guid: 4f6b7ab6689a4b94bb364afb327f670a
+  - enabled: 1
+    path: Assets/MapScene/ControlsMenu.unity
+    guid: 908ff715ae9ee8e4e9a85ba2549e4d8a
+  - enabled: 1
+    path: Assets/MapScene/ControlsDisplayMenu.unity
+    guid: 4da03ec2ade741b4b8ffb93eea5a9b2a
   - enabled: 1
     path: Assets/MapScene/TestingSpell.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
-    path: Assets/MapScene/VideoMenu.unity
-    guid: 4f6b7ab6689a4b94bb364afb327f670a
   - enabled: 0
     path: Assets/MapScene/GameMap.unity
     guid: 4db27cd2ebbe6a34497ba5abb5dc9b2b
