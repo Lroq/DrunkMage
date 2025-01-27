@@ -10,14 +10,12 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Button quitToMainMenuButton;
     private bool isPaused = false;
 
-
     void Start()
     {
         // Add listeners to the buttons
         resumeButton.onClick.AddListener(ResumeGame);
         quitToMainMenuButton.onClick.AddListener(QuitToMainMenu);
     }
-
 
     void Update()
     {

@@ -5,6 +5,7 @@ using System.Collections;
 public class Timer : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI timerText;
+    [SerializeField] TextMeshProUGUI timerTextShadow;
     float elapsedTime;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,6 +20,7 @@ public class Timer : MonoBehaviour
         int minutes = (int)elapsedTime / 60;
         int seconds = (int)elapsedTime % 60;
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        timerTextShadow.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
     public int GetMinuteCount()
