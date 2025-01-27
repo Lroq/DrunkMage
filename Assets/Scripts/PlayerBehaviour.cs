@@ -7,15 +7,15 @@ public class PlayerBehaviour : MonoBehaviour
     private InputAction moveaction;
     private Animator anim;
     private InputAction fireaction;
+    private InputAction dashaction;
     private GameManager manager;
     [SerializeField] private SpellsBehaviour spells;
     private Vector2 velocity = Vector2.zero;
     private int direction = 0;
     [SerializeField] private float speed = 5f;
     private GameObject currentEarthBall;
-    [SerializeField] private Timer timer;
 
-     public float Speed
+    public float Speed
     {
         get { return speed; }
         set { speed = value; }
@@ -27,6 +27,7 @@ public class PlayerBehaviour : MonoBehaviour
         inputs = manager.GetInputs();
         moveaction = inputs.actions.FindAction("Move");
         fireaction = inputs.actions.FindAction("Fire");
+        dashaction = inputs.actions.FindAction("Dash");
 
         anim = GetComponent<Animator>();
 
@@ -46,46 +47,49 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (moveaction == null) return; // Sécurité si l'action est null.
+        if (moveaction == null) return;
+
         Vector2 _moveValue = moveaction.ReadValue<Vector2>();
         _moveValue = ChooseDirection(_moveValue);
         velocity = _moveValue * speed;
 
         transform.position += new Vector3(velocity.x * Time.fixedDeltaTime, velocity.y * Time.fixedDeltaTime, 0);
 
-        //Animation
+        anim.SetFloat("Speed", velocity.sqrMagnitude);
         anim.SetInteger("directions", direction);
     }
 
+
     private void Update()
     {
-        if (fireaction.triggered)
+        if (spells.GetCurrentSpell() == "DrunkBoomBehaviour" || spells.GetCurrentSpell() == "FireballBehaviour" || spells.GetCurrentSpell() == "DivineSmiteBehaviour")
         {
-            spells.InvokeCurrentSpell();
-            spells.GetCurrentSpell();
+            if (fireaction.triggered)
+            {
+                Debug.Log("Fire!");
+                spells.CastCurrentSpell();
+            }
         }
 
-        // Disable mouse click for 10s when Blizzard or Tempest is active
-        if (spells.GetCurrentSpell() == "BlizzardBehaviour" || spells.GetCurrentSpell() == "TempestBehaviour")
+        // Trigger dash ability if the player presses the dash button
+        if (dashaction.triggered)
         {
-            //spells.InvokeCurrentSpellOnce();
-            fireaction.Disable();
-            Invoke("EnableFireAction", 10f);
-        } // FIX THE LOGIC HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            Debug.Log("Dash!");
+            transform.position += new Vector3(velocity.x * 2 * Time.deltaTime, velocity.y * 2 * Time.deltaTime, 0);
+        }
     }
 
     private Vector2 ChooseDirection(Vector2 _value)
     {
         Vector2 _result = Vector2.zero;
 
-        // Choix de la direction principale selon l'axe ayant la valeur la plus grande
         if (Mathf.Abs(_value.x) >= Mathf.Abs(_value.y))
         {
-            _result = new Vector2(_value.x, 0); // Priorité sur X
+            _result = new Vector2(_value.x, 0); // Prioritize X
         }
         else
         {
-            _result = new Vector2(0, _value.y); // Priorité sur Y
+            _result = new Vector2(0, _value.y); // Prioritize Y
         }
         direction = SetDirection(_result);
         return _result;
@@ -98,15 +102,5 @@ public class PlayerBehaviour : MonoBehaviour
         if (_vector.y > 0) return 8;
         if (_vector.y < 0) return 2;
         return 0;
-    }
-
-    public void ResetSpeed()
-    {
-        speed = 5f;
-    }
-
-    private void EnableFireAction()
-    {
-        fireaction.Enable();
     }
 }
