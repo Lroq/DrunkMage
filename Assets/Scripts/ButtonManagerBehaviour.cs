@@ -8,6 +8,10 @@ public class ButtonManagerBehaviour : MonoBehaviour
     [SerializeField] private GameObject QuitButton;
     [SerializeField] private GameObject PlayButton;
     [SerializeField] private GameObject SettingsButton;
+    public AudioClip playMusic;
+    public AudioClip mainMenuMusicMusic;
+
+    private MusicManager musicManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -25,7 +29,11 @@ public class ButtonManagerBehaviour : MonoBehaviour
 
     public void OnPlayButtonClicked()
     {
+        musicManager = FindFirstObjectByType<MusicManager>();
+        musicManager.StopMusic();
+        musicManager.PlayMusic(playMusic);
         SceneManager.LoadScene("TestingSpell");
+
         Debug.Log("Play Button Clicked");
     }
 
@@ -38,7 +46,7 @@ public class ButtonManagerBehaviour : MonoBehaviour
     public void OnQuitButtonClicked()
     {
         Application.Quit();
-
+        
         Debug.Log("Quit Button Clicked");
     }
 }

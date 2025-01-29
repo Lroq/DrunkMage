@@ -15,6 +15,8 @@ public class MobSpawner : MonoBehaviour
 
     private float adjustedSpawnInterval;
 
+    public PlayerHealth playerHealth;
+
     private void Start()
     {
         if (mainCamera == null)

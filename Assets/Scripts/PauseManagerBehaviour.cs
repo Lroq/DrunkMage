@@ -10,6 +10,9 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private Button quitToMainMenuButton;
     private bool isPaused = false;
 
+    public AudioClip mainMenuMusicMusic;
+    private MusicManager musicManager;
+
     void Start()
     {
         // Add listeners to the buttons
@@ -66,6 +69,10 @@ public class PauseManager : MonoBehaviour
     public void QuitToMainMenu()
     {
         Time.timeScale = 1;
+        AudioListener.pause = false;
         SceneManager.LoadScene("MainMenu");
+        MusicManager musicManager = FindFirstObjectByType<MusicManager>();
+        musicManager.StopMusic();
+        musicManager.PlayMusic(mainMenuMusicMusic);
     }
 }
