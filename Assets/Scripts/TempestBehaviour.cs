@@ -2,14 +2,15 @@ using UnityEngine;
 
 public class TempestBehaviour : MonoBehaviour, ISpellBehaviour
 {
-    [SerializeField] private float _speed = 5.0f;
-    [SerializeField] private float _destroyTime = 10.0f;
-    [SerializeField] private GameObject _tempestPrefab;
-    [SerializeField] private Camera _mainCamera;
+    [SerializeField] private float speed = 5.0f;
+    [SerializeField] private float destroyTime = 10.0f;
+    [SerializeField] private GameObject tempestPrefab;
+    [SerializeField] private Camera mainCamera;
 
-    private GameObject _currentTempest;
-    private Rigidbody2D _tempestRigidbody;
-    private Vector2 _currentDirection;
+    private GameObject currentTempest;
+    private Rigidbody2D tempestRigidbody;
+    private Vector2 currentDirection;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -17,32 +18,32 @@ public class TempestBehaviour : MonoBehaviour, ISpellBehaviour
 
     void Update()
     {
-        MoveSpell(_currentTempest);
+        MoveSpell(currentTempest);
         CheckIfHitMob();
     }
 
     public void InvokeSpell()
     {
-        if (_tempestPrefab == null)
+        if (tempestPrefab == null)
         {
             Debug.LogWarning("Tempest prefab is not assigned.");
             return;
         }
 
         // Spawn the tempest at the player's position
-        _currentTempest = Instantiate(_tempestPrefab, transform.position, Quaternion.identity);
-        _tempestRigidbody = _currentTempest.GetComponent<Rigidbody2D>();
+        currentTempest = Instantiate(tempestPrefab, transform.position, Quaternion.identity);
+        tempestRigidbody = currentTempest.GetComponent<Rigidbody2D>();
 
-        if (_tempestRigidbody == null)
+        if (tempestRigidbody == null)
         {
             Debug.LogWarning("Tempest prefab does not have a Rigidbody2D component.");
             return;
         }
 
         // Initialize a random direction for the tempest
-        _currentDirection = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized;
+        currentDirection = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized;
 
-        Destroy(_currentTempest, _destroyTime);
+        Destroy(currentTempest, destroyTime);
     }
 
     // Move the tempest from the player position into a random direction within the screen bounds and make it bounce off the screen edges
@@ -51,30 +52,30 @@ public class TempestBehaviour : MonoBehaviour, ISpellBehaviour
         if (spell != null)
         {
             Vector2 position = spell.transform.position;
-            Vector2 screenPosition = _mainCamera.WorldToScreenPoint(position);
+            Vector2 screenPosition = mainCamera.WorldToScreenPoint(position);
 
             if (screenPosition.x < 0 || screenPosition.x > Screen.width)
             {
-                _currentDirection.x *= -1;
+                currentDirection.x *= -1;
             }
 
             if (screenPosition.y < 0 || screenPosition.y > Screen.height)
             {
-                _currentDirection.y *= -1;
+                currentDirection.y *= -1;
             }
 
-            _tempestRigidbody.linearVelocity = _currentDirection * _speed;
+            tempestRigidbody.linearVelocity = currentDirection * speed;
         }
     }
 
     public void CheckIfHitMob()
     {
-        if (_currentTempest == null)
+        if (currentTempest == null)
         {
             return; // No tempest to check
         }
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(_currentTempest.transform.position, 0.5f);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(currentTempest.transform.position, 0.5f);
         foreach (Collider2D collider in colliders)
         {
             OnEnterTrigger(collider);
@@ -88,6 +89,16 @@ public class TempestBehaviour : MonoBehaviour, ISpellBehaviour
             // Handle mob hit
             Debug.Log("Tempest hit mob: " + collider.name);
             Destroy(collider.gameObject);
+        }
+    }
+
+    public void PlaySFX()
+    {
+        // Play the tempest sound effect
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource != null)
+        {
+            audioSource.Play();
         }
     }
 }

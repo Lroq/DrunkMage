@@ -11,6 +11,8 @@ public class FireballBehaviour : MonoBehaviour, ISpellBehaviour
 
     [SerializeField] private List<GameObject> fireballs = new List<GameObject>();
 
+    private AudioSource audioSource;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -98,5 +100,11 @@ public class FireballBehaviour : MonoBehaviour, ISpellBehaviour
                 currentFireball.transform.rotation = Quaternion.Euler(0, 0, angle);
             }
         }
+    }
+
+    public void PlaySFX()
+    {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.Play();
     }
 }

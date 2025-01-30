@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 
@@ -7,13 +8,29 @@ public class SpellsBehaviour : MonoBehaviour
     [SerializeField] private TextMeshProUGUI spellNameText;
     [SerializeField] private Timer timer;
     [SerializeField] private List<MonoBehaviour> spellBehaviours = new List<MonoBehaviour>();
+    [SerializeField] private Image spellIconImage; // UI Image for the spell icon
+    [SerializeField] private Sprite defaultIcon; // Default icon for no spell or unknown spell
+    [SerializeField] private List<SpellIconMapping> spellIconMappings; // List to map spell names to icons
+
     private ISpellBehaviour currentSpell;
     private bool isCooldownActive = false;
     private string queuedSpell = null;
     private int lastTimerSecond = -1;
 
+    private Dictionary<string, Sprite> spellIcons; // Internal dictionary for quick icon lookup
+
+    [System.Serializable]
+    public class SpellIconMapping
+    {
+        public string spellName; // Name of the spell
+        public Sprite icon;      // Associated icon sprite
+    }
+
     void Start()
     {
+
+        InitializeSpellIcons();
+
         List<MonoBehaviour> validSpells = new List<MonoBehaviour>();
 
         foreach (var spell in spellBehaviours)
@@ -25,8 +42,9 @@ public class SpellsBehaviour : MonoBehaviour
         }
 
         spellBehaviours = validSpells;
+
         ChooseRandomSpell();
-        UpdateSpellName();
+        UpdateSpellDisplay();
     }
 
     void Update()
@@ -42,7 +60,6 @@ public class SpellsBehaviour : MonoBehaviour
             lastTimerSecond = currentSecond; // Update the last updated second
         }
     }
-
 
     public void ChooseRandomSpell()
     {
@@ -71,7 +88,7 @@ public class SpellsBehaviour : MonoBehaviour
         }
 
         currentSpell = newSpell;
-        UpdateSpellName();
+        UpdateSpellDisplay();
 
         if (newSpell.GetType().Name == "BlizzardBehaviour" ||
             newSpell.GetType().Name == "TempestBehaviour" ||
@@ -118,18 +135,76 @@ public class SpellsBehaviour : MonoBehaviour
         return currentSpell?.GetType().Name ?? "None";
     }
 
+    private void UpdateSpellDisplay()
+    {
+        UpdateSpellName();
+        UpdateSpellIcon();
+    }
+
     private void UpdateSpellName()
     {
         if (spellNameText != null && currentSpell != null)
         {
             string displayName = currentSpell.GetType().Name.Replace("Behaviour", "");
-            spellNameText.text = "Current Spell: " + displayName;
+            spellNameText.text = displayName;
         }
         else if (spellNameText != null)
         {
             spellNameText.text = "No Spell Selected";
         }
     }
+
+    private void UpdateSpellIcon()
+    {
+
+        if (spellIconImage == null)
+        {
+            Debug.LogWarning("Spell Icon Image is not assigned in the Inspector.");
+            return;
+        }
+
+        if (spellIcons == null || spellIcons.Count == 0)
+        {
+            Debug.LogWarning("Spell Icons dictionary is not initialized or empty.");
+            spellIconImage.sprite = defaultIcon; // Set to default icon as fallback
+            return;
+        }
+
+        string spellName = currentSpell?.GetType().Name;
+        Debug.Log($"Looking for spell icon: {spellName}");
+        if (spellName != null && spellIcons.ContainsKey(spellName))
+        {
+            spellIconImage.sprite = spellIcons[spellName];
+        }
+        else
+        {
+            spellIconImage.sprite = defaultIcon; // Default icon for unknown spells
+        }
+    }
+
+    void InitializeSpellIcons()
+    {
+        spellIcons = new Dictionary<string, Sprite>();
+
+        foreach (var mapping in spellIconMappings)
+        {
+            if (!string.IsNullOrEmpty(mapping.spellName) && mapping.icon != null)
+            {
+                spellIcons[mapping.spellName] = mapping.icon;
+                Debug.Log($"Mapped {mapping.spellName} to an icon.");
+            }
+            else
+            {
+                Debug.LogWarning("A mapping entry is invalid: Spell name or icon is null.");
+            }
+        }
+
+        if (spellIcons.Count == 0)
+        {
+            Debug.LogWarning("No valid spell mappings found. Spell Icons dictionary is empty.");
+        }
+    }
+
 
     public void CastCurrentSpell()
     {

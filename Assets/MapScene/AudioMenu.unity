@@ -3215,6 +3215,7 @@ MonoBehaviour:
   mainVolumeValueText: {fileID: 29537813}
   musicVolumeValueText: {fileID: 564523}
   sfxVolumeValueText: {fileID: 24838588}
+  audioMixer: {fileID: 24100000, guid: bf138d2629ff9944983642c4b9ec2d79, type: 2}
 --- !u!4 &2109421866
 Transform:
   m_ObjectHideFlags: 0

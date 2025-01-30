@@ -8,9 +8,12 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 7
-    m_ConditionEvent: directions
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 8
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4737509251071249771}
   m_Solo: 0
@@ -87,9 +90,12 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 6
-    m_ConditionEvent: directions
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 2
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1593062143270132892}
   m_Solo: 0
@@ -139,9 +145,12 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 6
-    m_ConditionEvent: directions
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 8
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8258741298438135849}
   m_Solo: 0
@@ -165,7 +174,13 @@ AnimatorController:
   m_Name: Player
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: directions
+  - m_Name: isWalking
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: direction
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -192,8 +207,11 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 7
-    m_ConditionEvent: directions
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 2
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4737509251071249771}
@@ -238,7 +256,7 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 20, y: 180, z: 0}
+  m_AnyStatePosition: {x: -210, y: 190, z: 0}
   m_EntryPosition: {x: 40, y: 90, z: 0}
   m_ExitPosition: {x: 690, y: 40, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
@@ -251,9 +269,12 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 7
-    m_ConditionEvent: directions
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 6
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4737509251071249771}
   m_Solo: 0
@@ -306,9 +327,12 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 7
-    m_ConditionEvent: directions
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 4
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4737509251071249771}
   m_Solo: 0
@@ -358,9 +382,12 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 6
-    m_ConditionEvent: directions
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 6
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8050768969349171763}
   m_Solo: 0
@@ -383,9 +410,12 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 6
-    m_ConditionEvent: directions
+  - m_ConditionMode: 3
+    m_ConditionEvent: direction
     m_EventTreshold: 4
+  - m_ConditionMode: 1
+    m_ConditionEvent: isWalking
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 8252311557589690051}
   m_Solo: 0

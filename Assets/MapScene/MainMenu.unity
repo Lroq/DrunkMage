@@ -1734,11 +1734,11 @@ AudioSource:
   m_GameObject: {fileID: 1268995863}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -4913676467933461074, guid: bf138d2629ff9944983642c4b9ec2d79, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1870,6 +1870,7 @@ MonoBehaviour:
   PlayButton: {fileID: 645990412}
   SettingsButton: {fileID: 1885400831}
   playMusic: {fileID: 8300000, guid: 8161741903995be42a7d94881dac2e9f, type: 3}
+  mainMenuMusicMusic: {fileID: 0}
 --- !u!4 &1491152236
 Transform:
   m_ObjectHideFlags: 0

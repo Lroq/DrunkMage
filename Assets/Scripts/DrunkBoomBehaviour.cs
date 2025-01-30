@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class DrunkBoomBehaviour : MonoBehaviour, ISpellBehaviour
 {
-    [SerializeField] private GameObject _player;
-    [SerializeField] private GameObject _drunkBoomPrefab;
+    [SerializeField] private GameObject playerr;
+    [SerializeField] private GameObject drunkBoomPrefab;
 
-    private GameObject _currentDrunkBoom;
+    private GameObject currentDrunkBoom;
+
+    private AudioSource audioSource;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,29 +23,29 @@ public class DrunkBoomBehaviour : MonoBehaviour, ISpellBehaviour
 
     public void InvokeSpell()
     {
-        if (_drunkBoomPrefab == null)
+        if (drunkBoomPrefab == null)
         {
             Debug.LogWarning("Drunk Boom prefab is not assigned.");
             return;
         }
 
         // Spawn the drunk boom at the player's position
-        Vector3 spawnPosition = _player.transform.position;
+        Vector3 spawnPosition = playerr.transform.position;
         spawnPosition.z -= 1;
-        _currentDrunkBoom = Instantiate(_drunkBoomPrefab, spawnPosition, Quaternion.identity);
-        Rigidbody2D _drunkBoomRigidbody = _currentDrunkBoom.GetComponent<Rigidbody2D>();
+        currentDrunkBoom = Instantiate(drunkBoomPrefab, spawnPosition, Quaternion.identity);
+        Rigidbody2D drunkBoomRigidbody = currentDrunkBoom.GetComponent<Rigidbody2D>();
 
-        if (_drunkBoomRigidbody == null)
+        if (drunkBoomRigidbody == null)
         {
             Debug.LogWarning("Drunk Boom prefab does not have a Rigidbody2D component.");
             return;
         }
 
         // Destroy the drunk boom after a set amount of time
-        Destroy(_currentDrunkBoom, 0.2f);
+        Destroy(currentDrunkBoom, 0.2f);
 
         // Slow down the player for a set amount of time
-        PlayerBehaviour player = _player.GetComponent<PlayerBehaviour>();
+        PlayerBehaviour player = playerr.GetComponent<PlayerBehaviour>();
         player.Speed = 2f;
 
         // Reset the player speed after a set amount of time
@@ -52,13 +54,13 @@ public class DrunkBoomBehaviour : MonoBehaviour, ISpellBehaviour
 
     public void CheckIfHitMob()
     {
-        if (_currentDrunkBoom == null)
+        if (currentDrunkBoom == null)
         {
             return; // No drunk boom to check
         }
 
         // Check if the drunk boom hit a mob
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(_currentDrunkBoom.transform.position, 1f);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(currentDrunkBoom.transform.position, 1f);
         foreach (Collider2D hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Mob"))
@@ -74,7 +76,13 @@ public class DrunkBoomBehaviour : MonoBehaviour, ISpellBehaviour
 
     private void ResetPlayerSpeed()
     {
-        PlayerBehaviour player = _player.GetComponent<PlayerBehaviour>();
-        player.Speed = 5f;
+        PlayerBehaviour pplayer = playerr.GetComponent<PlayerBehaviour>();
+        pplayer.Speed = 5f;
+    }
+
+    public void PlaySFX()
+    {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.Play();
     }
 }

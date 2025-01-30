@@ -2,19 +2,20 @@ using UnityEngine;
 
 public class EarthballBehaviour : MonoBehaviour, ISpellBehaviour
 {
-    [SerializeField] private GameObject _player;
-    [SerializeField] private GameObject _earthballPrefab;
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject earthballPrefab;
     [SerializeField] private float orbitRadius = 2f; // Distance from the player
     [SerializeField] private float orbitSpeed = 50f; // Speed of the orbit in degrees per second
 
-    private GameObject _currentEarthball;
-    private float _orbitAngle; // Current angle of the orbit
+    private GameObject currentEarthball;
+    private float orbitAngle; // Current angle of the orbit
+    private AudioSource audioSource;
 
     // Update is called once per frame
     void Update()
     {
         // Make the earthball orbit around the player
-        MoveSpell(_currentEarthball);
+        MoveSpell(currentEarthball);
 
         // Optionally check for mob collisions while orbiting
         CheckIfHitMob();
@@ -23,24 +24,24 @@ public class EarthballBehaviour : MonoBehaviour, ISpellBehaviour
     // Spawn the earthball at the start of the orbit
     public void InvokeSpell()
     {
-        if (_earthballPrefab == null)
+        if (earthballPrefab == null)
         {
             Debug.LogWarning("Earthball prefab is not assigned.");
             return;
         }
 
-        if (_player == null)
+        if (player == null)
         {
             Debug.LogWarning("Player object is not assigned.");
             return;
         }
 
         // Calculate the initial spawn position (at the orbit radius on the right side)
-        Vector3 spawnPosition = _player.transform.position;
+        Vector3 spawnPosition = player.transform.position;
         spawnPosition.x += orbitRadius;
 
         // Instantiate the earthball
-        _currentEarthball = Instantiate(_earthballPrefab, spawnPosition, Quaternion.identity);
+        currentEarthball = Instantiate(earthballPrefab, spawnPosition, Quaternion.identity);
 
         DestroyEarthball();
     }
@@ -48,18 +49,18 @@ public class EarthballBehaviour : MonoBehaviour, ISpellBehaviour
     // Make the earthball orbit around the player
     public void MoveSpell(GameObject spell)
     {
-        if (spell == null || _player == null)
+        if (spell == null || player == null)
         {
             return;
         }
 
         // Increment the orbit angle based on the speed and time
-        _orbitAngle += orbitSpeed * Time.deltaTime;
-        _orbitAngle %= 360; // Keep the angle within 0-360 degrees
+        orbitAngle += orbitSpeed * Time.deltaTime;
+        orbitAngle %= 360; // Keep the angle within 0-360 degrees
 
         // Convert the angle to radians and calculate the new position
-        float radians = _orbitAngle * Mathf.Deg2Rad;
-        Vector3 playerPosition = _player.transform.position;
+        float radians = orbitAngle * Mathf.Deg2Rad;
+        Vector3 playerPosition = player.transform.position;
         float x = playerPosition.x + orbitRadius * Mathf.Cos(radians);
         float y = playerPosition.y + orbitRadius * Mathf.Sin(radians);
 
@@ -70,13 +71,13 @@ public class EarthballBehaviour : MonoBehaviour, ISpellBehaviour
     // Check if the earthball hit a mob
     public void CheckIfHitMob()
     {
-        if (_currentEarthball == null)
+        if (currentEarthball == null)
         {
             return;
         }
 
         // Detect nearby mobs using OverlapCircle
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(_currentEarthball.transform.position, 0.5f);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(currentEarthball.transform.position, 0.5f);
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject.CompareTag("Mob"))
@@ -90,11 +91,17 @@ public class EarthballBehaviour : MonoBehaviour, ISpellBehaviour
     // Destroy the earthball after a certain amount of time
     public void DestroyEarthball()
     {
-        if (_currentEarthball == null)
+        if (currentEarthball == null)
         {
             return;
         }
 
-        Destroy(_currentEarthball, 10.0f); // Example lifetime of 10 seconds
+        Destroy(currentEarthball, 10.0f); // Example lifetime of 10 seconds
+    }
+
+    public void PlaySFX()
+    {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.Play();
     }
 }

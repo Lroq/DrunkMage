@@ -2,20 +2,39 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Audio;
 
 public class GameOverMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject gameOverMenu; // Reference to the Game Over menu
-    [SerializeField] private GameObject gameOverBackground; // Gradient black panel
-    [SerializeField] private Image backgroundImage; // Image component of the background
-    [SerializeField] private GameObject replayButton; // Reference to the Replay button
-    [SerializeField] private GameObject quitButton; // Reference to the Quit button
+    [SerializeField] private GameObject gameOverMenu;
+    [SerializeField] private GameObject gameOverBackground;
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private GameObject replayButton;
+    [SerializeField] private GameObject quitButton;
+    [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private AudioClip buttonClickSFX;
 
     public AudioClip mainMenuMusic;
     public AudioClip gameplayMusic;
+    private AudioSource audioSource;
 
     void Awake()
     {
+        // Ensure that AudioSource is present
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            Debug.LogError("AudioSource component not found. Please add an AudioSource component to this GameObject.");
+        }
+
+        // Load the button click SFX once during initialization
+        buttonClickSFX = Resources.Load<AudioClip>("ButtonClickSFX");
+        if (buttonClickSFX == null)
+        {
+            Debug.LogError("ButtonClickSFX not found in Resources folder.");
+        }
+
+        // Set up the button listeners
         replayButton.GetComponent<Button>().onClick.AddListener(OnReplayButtonClicked);
         quitButton.GetComponent<Button>().onClick.AddListener(OnQuitButtonClicked);
 
@@ -57,6 +76,8 @@ public class GameOverMenu : MonoBehaviour
     public void ReplayGame()
     {
         Time.timeScale = 1f;
+        PlayButtonClickSFX();
+        audioMixer.SetFloat("MusicVolume", 1f); // Reset the music volume
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         AudioListener.pause = false;
 
@@ -70,6 +91,8 @@ public class GameOverMenu : MonoBehaviour
     public void QuitGame()
     {
         Time.timeScale = 1f;
+        PlayButtonClickSFX();
+        audioMixer.SetFloat("MusicVolume", 1f); // Reset the music volume
         SceneManager.LoadScene("MainMenu");
         AudioListener.pause = false;
 
@@ -77,6 +100,22 @@ public class GameOverMenu : MonoBehaviour
         if (musicManager != null)
         {
             musicManager.PlayMusic(mainMenuMusic);
+        }
+    }
+
+    private void PlayButtonClickSFX()
+    {
+        if (audioSource != null && buttonClickSFX != null)
+        {
+            audioSource.PlayOneShot(buttonClickSFX);
+        }
+        else if (audioSource == null)
+        {
+            Debug.LogWarning("AudioSource is not assigned.");
+        }
+        else
+        {
+            Debug.LogWarning("ButtonClickSFX is not assigned.");
         }
     }
 

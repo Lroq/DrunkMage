@@ -3,11 +3,13 @@ using System.Collections.Generic;
 
 public class DivineSmiteBehaviour : MonoBehaviour, ISpellBehaviour
 {
-    [SerializeField] private GameObject _divineSmitePrefab;
+    [SerializeField] private GameObject divineSmitePrefab;
     [SerializeField] private MobSpawner mob;
 
-    private List<GameObject> _spawnedMobs;
-    private GameObject _currentDivineSmite;
+    private List<GameObject> spawnedMobs;
+    private GameObject currentDivineSmite;
+
+    private AudioSource audioSource;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -22,23 +24,23 @@ public class DivineSmiteBehaviour : MonoBehaviour, ISpellBehaviour
 
     public void InvokeSpell()
     {
-        _spawnedMobs = mob.GetListOfMobsGenerated();
-        if (_divineSmitePrefab == null)
+        spawnedMobs = mob.GetListOfMobsGenerated();
+        if (divineSmitePrefab == null)
         {
             Debug.LogWarning("Divine Smite prefab is not assigned.");
             return;
         }
 
         // Check if there are any mobs available
-        if (_spawnedMobs == null || _spawnedMobs.Count == 0)
+        if (spawnedMobs == null || spawnedMobs.Count == 0)
         {
             Debug.LogWarning("No mobs available to smite.");
             return;
         }
 
         // Choose a random mob from the list
-        int randomIndex = Random.Range(0, _spawnedMobs.Count);
-        GameObject selectedMob = _spawnedMobs[randomIndex];
+        int randomIndex = Random.Range(0, spawnedMobs.Count);
+        GameObject selectedMob = spawnedMobs[randomIndex];
 
         if (selectedMob == null)
         {
@@ -49,16 +51,16 @@ public class DivineSmiteBehaviour : MonoBehaviour, ISpellBehaviour
         // Spawn the divine smite at the selected mob's position if the mob is within the camera view
         if (selectedMob.transform.position.x < Camera.main.transform.position.x + 10)
         {
-            _currentDivineSmite = Instantiate(_divineSmitePrefab, selectedMob.transform.position, Quaternion.identity);
+            currentDivineSmite = Instantiate(divineSmitePrefab, selectedMob.transform.position, Quaternion.identity);
 
         }
         Destroy(selectedMob);
 
         // Remove the destroyed mob from the list
-        _spawnedMobs.RemoveAt(randomIndex);
+        spawnedMobs.RemoveAt(randomIndex);
 
         // Destroy the divine smite after a set amount of time
-        Destroy(_currentDivineSmite, 0.2f);
+        Destroy(currentDivineSmite, 0.2f);
     }
 
     public void MoveSpell(GameObject spell)
@@ -67,6 +69,12 @@ public class DivineSmiteBehaviour : MonoBehaviour, ISpellBehaviour
 
     public void CheckIfHitMob()
     {
+    }
+
+    public void PlaySFX()
+    {
+        AudioSource audioSource = GetComponent<AudioSource>();
+        audioSource.Play();
     }
 
 }

@@ -14,6 +14,7 @@ public class PlayerBehaviour : MonoBehaviour
     private int direction = 0;
     [SerializeField] private float speed = 5f;
     private GameObject currentEarthBall;
+    private SpriteRenderer spriteRenderer;
 
     public float Speed
     {
@@ -28,6 +29,9 @@ public class PlayerBehaviour : MonoBehaviour
         moveaction = inputs.actions.FindAction("Move");
         fireaction = inputs.actions.FindAction("Fire");
         dashaction = inputs.actions.FindAction("Dash");
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
 
         GameObject spellsManager = GameObject.Find("Spells");
         if (spellsManager != null)
@@ -53,6 +57,8 @@ public class PlayerBehaviour : MonoBehaviour
 
         transform.position += new Vector3(velocity.x * Time.fixedDeltaTime, velocity.y * Time.fixedDeltaTime, 0);
 
+        anim.SetBool("isWalking", velocity != Vector2.zero);
+        anim.SetInteger("direction", direction);
         
     }
 
@@ -98,5 +104,31 @@ public class PlayerBehaviour : MonoBehaviour
         if (_vector.y > 0) return 8;
         if (_vector.y < 0) return 2;
         return 0;
+    }
+
+    private void UpdateAnimation(Vector2 _value)
+    {
+        if (_value != Vector2.zero)
+        {
+            anim.SetBool("isWalking", true);
+            anim.SetInteger("direction", direction);
+        }
+        else
+        {
+            anim.SetBool("isWalking", false);
+        }
+
+        if (_value.x > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if (_value.x < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+
+        Debug.Log("isWalking: " + (velocity != Vector2.zero));
+        Debug.Log("Direction: " + direction);
+        Debug.Log("Animator State: " + anim.GetCurrentAnimatorStateInfo(0).IsName("Walking")); // Example state name
     }
 }

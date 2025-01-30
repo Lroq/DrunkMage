@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class BlizzardBehaviour : MonoBehaviour, ISpellBehaviour
 {
-    [SerializeField] private GameObject _player;
-    [SerializeField] private GameObject _blizzardPrefab;
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject blizzardPrefab;
 
-    private float _blizzardLifetime = 10.0f;
-    private GameObject _currentBlizzard;
-    private Rigidbody2D _blizzardRigidbody;
+    private float blizzardLifetime = 10.0f;
+    private GameObject currentBlizzard;
+    private Rigidbody2D blizzardRigidbody;
+    private AudioSource audioSource;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,25 +19,25 @@ public class BlizzardBehaviour : MonoBehaviour, ISpellBehaviour
     // Update is called once per frame
     void Update()
     {
-        MoveSpell(_currentBlizzard);
+        MoveSpell(currentBlizzard);
     }
 
     //Spawn the blizzard at the player's position
     public void InvokeSpell()
     {
-        if (_blizzardPrefab == null)
+        if (blizzardPrefab == null)
         {
             Debug.LogWarning("Blizzard prefab is not assigned.");
             return;
         }
 
         // Spawn the blizzard at the player's position
-        Vector3 spawnPosition = _player.transform.position;
+        Vector3 spawnPosition = player.transform.position;
         spawnPosition.z -= 1;
-        _currentBlizzard = Instantiate(_blizzardPrefab, spawnPosition, Quaternion.identity);
-        _blizzardRigidbody = _currentBlizzard.GetComponent<Rigidbody2D>();
+        currentBlizzard = Instantiate(blizzardPrefab, spawnPosition, Quaternion.identity);
+        blizzardRigidbody = currentBlizzard.GetComponent<Rigidbody2D>();
 
-        if (_blizzardRigidbody == null)
+        if (blizzardRigidbody == null)
         {
             Debug.LogWarning("Blizzard prefab does not have a Rigidbody2D component.");
             return;
@@ -50,7 +51,7 @@ public class BlizzardBehaviour : MonoBehaviour, ISpellBehaviour
     {
         if (spell != null)
         {
-            Vector2 playerPosition = _player.transform.position;
+            Vector2 playerPosition = player.transform.position;
             spell.transform.position = playerPosition;
         }
     }
@@ -58,12 +59,12 @@ public class BlizzardBehaviour : MonoBehaviour, ISpellBehaviour
     //Check if the blizzard hit a mob
     public void CheckIfHitMob()
     {
-        if (_currentBlizzard == null)
+        if (currentBlizzard == null)
         {
             return; // No blizzard to check
         }
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(_currentBlizzard.transform.position, 1.0f);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(currentBlizzard.transform.position, 1.0f);
         foreach (Collider2D collider in colliders)
         {
             if (collider.CompareTag("Mob"))
@@ -76,11 +77,22 @@ public class BlizzardBehaviour : MonoBehaviour, ISpellBehaviour
     //Destroy the blizzard after a certain amount of time
     public void DestroyBlizzard()
     {
-        if (_currentBlizzard == null)
+        if (currentBlizzard == null)
         {
             return; // No blizzard to destroy
         }
 
-        Destroy(_currentBlizzard, _blizzardLifetime);
+        Destroy(currentBlizzard, blizzardLifetime);
+    }
+
+    //Play the blizzard sound effect
+    public void PlaySFX()
+    {
+        // Play the blizzard sound effect
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource != null)
+        {
+            audioSource.Play();
+        }
     }
 }
